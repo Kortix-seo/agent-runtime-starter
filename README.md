@@ -88,6 +88,29 @@ one of the lines in `agents/triage.md`.
 - [The manifest](https://kortix.com/docs/project/manifest): every key in
   `kortix.yaml`.
 
+## Before you copy it, read the field
+
+The rules above only mean something against the other runtimes a team could
+buy, so the same comparison is written out for a reader who has to choose. A
+[plain definition of an agent runtime](https://agentruntimesguide.com/what-is-an-agent-runtime)
+is the place to start if the words runtime, harness and framework are still
+tangled.
+
+Two follow-ups cover the decisions this repository cannot: how a
+[runtime differs from a harness](https://agentruntimesguide.com/agent-runtime-vs-agent-harness)
+when both are sold as the same thing, and what a
+[session-based architecture](https://agentruntimesguide.com/agent-runtime-architecture)
+commits you to once an agent writes back to a repository.
+
+The rest is operational. What it costs to leave a machine parked is on the
+[runtime cost comparison](https://agentruntimesguide.com/agent-runtime-cost),
+the install on your own hardware is in the
+[self-hosted runtime notes](https://agentruntimesguide.com/self-hosted-agent-runtime),
+and the [runtime comparison](https://agentruntimesguide.com/best-agent-runtimes)
+puts AgentCore, Cloudflare Agents, E2B, Modal, Daytona and LangSmith beside
+each other. The [field notes on the whole cluster](https://agentruntimesguide.com/)
+collect the rest.
+
 ## Where this comes from
 
 The files here follow the runtime Kortix documents on its own site, checked
