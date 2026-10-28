@@ -1,0 +1,25 @@
+# A minimal agent runtime configuration you can read in one sitting.
+#
+# Two agents, their tool rules, and the grants that decide what each one may
+# touch. Kortix compiles this file on every session start, so a permission
+# change is a diff a person reviews before it lands on main.
+kortix_version: 2
+default_agent: triage
+
+agents:
+  triage:
+    file: agents/triage.md
+    connectors: [helpdesk, github]
+    secrets: [HELPDESK_API_KEY]
+    skills: [kortix-cli]
+    kortix_permissions:
+      - project.session.read
+      - project.review.submit
+
+  release-notes:
+    file: agents/release-notes.md
+    connectors: [github]
+    skills: [kortix-cli]
+    kortix_permissions:
+      - project.session.read
+      - project.review.submit
