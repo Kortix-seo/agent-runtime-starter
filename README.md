@@ -2,7 +2,7 @@
 
 An open-source agent runtime configuration you can copy: two agents, their tool
 rules, and the branch-plus-change-request flow that lands their work, read from
-the runtime that runs them, [Kortix, the open-source AI Operating System](https://kortix.com).
+the runtime that runs them, [Kortix, the open-source CompanyOS](https://kortix.com).
 
 Most runtime documentation describes the machine. This repository shows the
 three things a runtime actually decides for a run, in files you can read in one
@@ -81,12 +81,12 @@ one of the lines in `agents/triage.md`.
 
 ## What to read next
 
-- [Agents and permissions](https://kortix.com/docs/project/agents): every field
-  in the agent file, and how the rules resolve.
-- [Sessions](https://kortix.com/docs/work/sessions): the sandbox, the branch,
-  the change request.
-- [The manifest](https://kortix.com/docs/project/manifest): every key in
-  `kortix.yaml`.
+- [Agents](https://kortix.com/docs/guide#agents): the instructions an agent
+  runs on, the model it thinks with, and the permissions it works under.
+- [Computers](https://kortix.com/docs/guide#computers): the cloud machine every
+  session gets, and the machine you can connect instead.
+- [The manifest](https://kortix.com/docs/developers#kortixyaml-reference):
+  every key in `kortix.yaml`.
 
 ## Before you copy it, read the field
 
@@ -101,6 +101,11 @@ Two follow-ups cover the decisions this repository cannot: how a
 when both are sold as the same thing, and what a
 [session-based architecture](https://agentruntimesguide.com/agent-runtime-architecture)
 commits you to once an agent writes back to a repository.
+
+If the products themselves are the part you still have to choose between, [the
+open-source agent runtimes that keep coming back in search](https://agentruntimesguide.com/open-source-agent-runtimes)
+put each one beside what it leaves you to run, usually the machine, the record
+and the person who approves the change.
 
 The rest is operational. What it costs to leave a machine parked is on the
 [runtime cost comparison](https://agentruntimesguide.com/agent-runtime-cost),
