@@ -10,7 +10,7 @@ sitting:
 
 | What it decides | Where it lives here |
 | --- | --- |
-| Which tools run, ask, or are refused | `permission` in `agents/triage.md` and `agents/release-notes.md` |
+| Which tools run, ask, or are refused | `permission` in `kortix.yaml` (`agents.triage` / `agents.release-notes`) |
 | What each agent may reach | `connectors`, `secrets`, `skills` and `kortix_permissions` in `kortix.yaml` |
 | How the work reaches main | the session branch and the change request described below |
 
@@ -27,23 +27,27 @@ what it changed, and who approved the diff.
 
 ## Tool rules
 
-`agents/triage.md` is the whole policy for the triage agent:
+`agents/triage.md` holds the prompt. The policy it runs under is in
+`kortix.yaml`, under `agents.triage`, beside that prompt in the same reviewed
+repository:
 
 ```yaml
-permission:
-  read: allow
-  edit:
-    "*": allow
-    "kortix.yaml": ask
-    "agents/*": ask
-  bash:
-    "*": ask
-    "git status": allow
-    "git diff *": allow
-    "git log *": allow
-    "rm -rf *": deny
-  webfetch: ask
-  websearch: ask
+agents:
+  triage:
+    permission:
+      read: allow
+      edit:
+        "*": allow
+        "kortix.yaml": ask
+        "agents/*": ask
+      bash:
+        "*": ask
+        "git status": allow
+        "git diff *": allow
+        "git log *": allow
+        "rm -rf *": deny
+      webfetch: ask
+      websearch: ask
 ```
 
 Each rule resolves to one of three actions: `allow` runs the call, `ask` waits
@@ -53,15 +57,20 @@ with no rule is allowed, which is why the fallback is written out.
 
 ## Grants
 
-Grants are deny-by-default. `kortix.yaml` gives the triage agent the helpdesk
-and GitHub connectors, one secret, one skill, and two Kortix permissions
-(`project.session.read`, `project.review.submit`). The release-notes agent gets
-the GitHub connector and nothing writable outside `releases/`.
+Grants are deny-by-default. `kortix.yaml` declares the `helpdesk` connector in
+`connectors` and the triage agent enables it by name; the release-notes agent
+gets no connector, because it works through git. `HELPDESK_API_KEY` is declared
+under `env`, so the run is handed a name and never a value, and the triage agent
+is the one agent that is granted it. Both agents hold the `kortix-cli` skill and
+two Kortix permissions (`project.session.read`, `project.review.submit`), and
+both set `workspace: { project_repository: true }`, so each session gets a
+checkout of the repository on its own branch. No GitHub connector is granted.
 
-Two keys behave differently from the rest, and both are deliberate here: an
-omitted `tools` key grants every tool, and an omitted `skills` leaves skill
-access to the agent file's own rule. The `skills` list in `kortix.yaml` is what
-closes skill loading down to `kortix-cli`.
+Three keys are open by default and everything else is closed: an omitted `tools`
+grants every tool, an omitted `permission` is `allow`, and `codemode` is on.
+Every other grant, `skills` included, reaches no agent until the agent names it.
+The `skills` list in `kortix.yaml` is what closes skill loading down to
+`kortix-cli`.
 
 ## Run it
 
@@ -76,8 +85,8 @@ kortix hosts use selfhost    # point this checkout at it
 ```
 
 Then open a session and ask it to triage the queue. Every reply it drafts
-arrives as a change request on its own branch, and every rule it ran under is
-one of the lines in `agents/triage.md`.
+arrives as a change request on its own branch, and every rule it ran under is a
+line in `kortix.yaml`, not one of the lines in `agents/triage.md`.
 
 ## What to read next
 
