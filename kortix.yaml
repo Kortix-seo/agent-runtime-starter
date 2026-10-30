@@ -1,25 +1,68 @@
+# yaml-language-server: $schema=https://kortix.com/schema/kortix.v3.schema.json
 # A minimal agent runtime configuration you can read in one sitting.
 #
 # Two agents, their tool rules, and the grants that decide what each one may
-# touch. Kortix compiles this file on every session start, so a permission
-# change is a diff a person reviews before it lands on main.
-kortix_version: 2
+# touch. Every behaviour key lives here, beside the prompt it applies to.
+# Kortix compiles this file on every session start, so a permission change is
+# a diff a person reviews before it lands on main.
+kortix_version: 3
 default_agent: triage
+
+project:
+  name: agent-runtime-starter
+  description: Two agents, the tool rules they run under, and the change request that lands their work.
+
+# Secret names only. Values live in Secrets.
+env:
+  required: [HELPDESK_API_KEY]
+
+connectors:
+  - slug: helpdesk
+    provider: http
+    base_url: https://helpdesk.example.com/api
+    auth:
+      type: bearer
 
 agents:
   triage:
-    file: agents/triage.md
-    connectors: [helpdesk, github]
-    secrets: [HELPDESK_API_KEY]
+    description: Reads the support queue, drafts a reply on each open ticket, and hands the drafts to a person. Never sends.
+    mode: primary
+    prompt_file: agents/triage.md
+    permission:
+      read: allow
+      edit:
+        "*": allow
+        "kortix.yaml": ask
+        "agents/*": ask
+      bash:
+        "*": ask
+        "git status": allow
+        "git diff *": allow
+        "git log *": allow
+        "rm -rf *": deny
+      webfetch: ask
+      websearch: ask
     skills: [kortix-cli]
-    kortix_permissions:
-      - project.session.read
-      - project.review.submit
+    connectors: [helpdesk]
+    secrets: [HELPDESK_API_KEY]
+    kortix_permissions: [project.session.read, project.review.submit]
+    workspace: { project_repository: true }
 
   release-notes:
-    file: agents/release-notes.md
-    connectors: [github]
+    description: Turns merged change requests into a release note draft on its own branch. Read-only outside `releases/`.
+    mode: subagent
+    prompt_file: agents/release-notes.md
+    permission:
+      read: allow
+      edit:
+        "*": deny
+        "releases/*": allow
+      bash:
+        "*": deny
+        "git log *": allow
+        "git diff *": allow
+      webfetch: deny
+      websearch: deny
     skills: [kortix-cli]
-    kortix_permissions:
-      - project.session.read
-      - project.review.submit
+    kortix_permissions: [project.session.read, project.review.submit]
+    workspace: { project_repository: true }
